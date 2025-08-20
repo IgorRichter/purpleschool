@@ -11,30 +11,3 @@ export default function App() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    paddingTop: 0,
-    paddingRight: 30,
-    paddingBottom: 43,
-    paddingLeft: 30,
-  },
-  title: {
-    fontSize: 34,
-    lineHeight: 1,
-    letterSpacing: 1,
-    textAlignVertical: 'center',
-    color: '#fff',
-  },
-  text: {
-    fontSize: 14,
-    lineHeight: 18,
-    letterSpacing: 1,
-    textAlignVertical: 'center',
-    color: '#A9A9A9',
-  },
-});
