@@ -1,13 +1,47 @@
 import { StatusBar } from 'expo-status-bar';
-import { Button, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, ImageBackground } from 'react-native';
+import { Button } from './shared/Button/Button';
 
 export default function App() {
   return (
-    <View>
-      <Text>Одно из самых вкусных кофе в городе!</Text>
-      <Text>Свежие зёрна, настоящая арабика и бережная обжарка</Text>
-      <Button title='Начать' />
-      <StatusBar style="auto" />
+    <View style={styles.container}>
+      <ImageBackground source={require('./assets/splash-image.jpg')} resizeMode="cover">
+        <View style={styles.wrapper}>
+          <Text style={styles.title}>Одно из самых вкусных кофе в городе!</Text>
+          <Text style={styles.text}>Свежие зёрна, настоящая арабика и бережная обжарка</Text>
+          <Button title='Начать' />
+          <StatusBar style="auto" />
+        </View>
+      </ImageBackground>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: '#000',
+    height: '100%',
+  },
+  wrapper: {
+    justifyContent: 'flex-end',
+    paddingHorizontal: 20,
+    paddingVertical: 44,
+    height: '100%',
+  },
+  title: {
+    fontSize: 34,
+    fontWeight: 600,
+    letterSpacing: 1,
+    textAlign: 'center',
+    color: '#ffffff',
+    marginBottom: 8,
+  },
+  text: {
+    fontSize: 14,
+    lineHeight: 18,
+    letterSpacing: 1,
+    textAlign: 'center',
+    color: '#a9a9a9',
+    marginBottom: 24,
+  }
+})
