@@ -12,7 +12,7 @@ export function Button({title, ...probs}: PressableProps & {title: string}) {
     Animated.timing(animatedValue, {
       toValue: 0,
       duration: 100,
-      useNativeDriver: true
+      useNativeDriver: false
     }).start();
     probs.onPressIn && probs.onPressIn(e);
   }
