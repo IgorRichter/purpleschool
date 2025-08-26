@@ -1,13 +1,14 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, ImageBackground } from 'react-native';
 import { Button } from './shared/Button/Button';
+import { AnimatedText } from './shared/AnimatedText/AnimatedText';
 
 export default function App() {
   return (
     <View style={styles.container}>
       <ImageBackground source={require('./assets/splash-image.jpg')} resizeMode="cover">
         <View style={styles.wrapper}>
-          <Text style={styles.title}>Одно из самых вкусных кофе в городе!</Text>
+          <AnimatedText style={styles.title} title='Одно из самых вкусных кофе в городе!' />
           <Text style={styles.text}>Свежие зёрна, настоящая арабика и бережная обжарка</Text>
           <Button title='Начать' />
           <StatusBar style="auto" />
@@ -35,6 +36,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#ffffff',
     marginBottom: 8,
+    transform: [{ translateY: -100 }]
   },
   text: {
     fontSize: 14,
