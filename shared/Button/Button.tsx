@@ -47,5 +47,6 @@ const styles = StyleSheet.create({
 		fontWeight: 600,
 		textAlign: 'center',
 		color: Color.white,
+		fontFamily: 'SoraSemiBold',
 	},
 });
