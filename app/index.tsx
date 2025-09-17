@@ -10,7 +10,7 @@ export default function App() {
 				<View style={styles.wrapper}>
 					<AnimatedText style={styles.title} title="Одно из самых вкусных кофе в городе!" />
 					<Text style={styles.text}>Свежие зёрна, настоящая арабика и бережная обжарка</Text>
-					<Button title="Начать" />
+					<Button title="Начать" href="catalog/index" />
 				</View>
 			</ImageBackground>
 		</View>
@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
 		color: Color.white,
 		marginBottom: 8,
 		fontFamily: 'SoraSemiBold',
-		transform: [{ translateY: -100 }],
+		transform: [{ translateY: -50 }],
 	},
 	text: {
 		fontSize: 14,
