@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TextInput, FlatList, Image, Pressable, ScrollView, Dimensions } from 'react-native';
-import { Api, Color } from '../../shared/tokens';
-import SearchIcon from '../../assets/icons/search';
-import StarIcon from '../../assets/icons/star';
+import { Api, Color, Font } from '../../../shared/tokens';
+import SearchIcon from '../../../assets/icons/search';
+import StarIcon from '../../../assets/icons/star';
 import { BlurView } from 'expo-blur';
-import PlusIcon from '../../assets/icons/plus';
+import PlusIcon from '../../../assets/icons/plus';
 
 type CoffeeItem = {
 	id: number;
@@ -29,7 +29,7 @@ const cardWidth = (width - CONTAINER_PADDING * 2 - CARD_MARGIN) / NUM_COLUMNS;
 export default function Catalog() {
 	const [coffees, setCoffees] = useState<CoffeeItem[]>([]);
 	const [searchText, setSearchText] = useState('');
-	const [activeType, setActiveType] = useState('cappuccino');
+	const [activeType, setActiveType] = useState('all');
 
 	const TYPE_LABELS: Record<string, string> = {
 		all: 'Все',
@@ -127,6 +127,7 @@ export default function Catalog() {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
+		backgroundColor: Color.background,
 	},
 	containerHeader: {
 		backgroundColor: Color.black,
@@ -138,7 +139,7 @@ const styles = StyleSheet.create({
 	searchInput: {
 		height: 52,
 		borderRadius: 16,
-		backgroundColor: Color.darkgray,
+		backgroundColor: Color.lightblack,
 		paddingHorizontal: 17,
 		paddingLeft: 50,
 		paddingRight: 20,
@@ -169,14 +170,14 @@ const styles = StyleSheet.create({
 		backgroundColor: Color.primary,
 	},
 	filterText: {
-		fontFamily: 'Sora',
+		fontFamily: Font.regular,
 		color: Color.black,
 		fontSize: 14,
 		fontWeight: 400,
 		lineHeight: 14,
 	},
 	filterTextActive: {
-		fontFamily: 'SoraSemiBold',
+		fontFamily: Font.bold,
 		color: Color.white,
 		fontWeight: 600,
 	},
@@ -215,16 +216,16 @@ const styles = StyleSheet.create({
 		paddingRight: 14,
 	},
 	ratingText: {
-		fontFamily: 'SoraSemiBold',
+		fontFamily: Font.bold,
 		fontSize: 10,
 		fontWeight: 600,
 		color: Color.white,
 		marginLeft: 3,
 	},
-	name: { fontSize: 16, fontFamily: 'SoraSemiBold', fontWeight: 600, marginBottom: 4, color: Color.title },
+	name: { fontSize: 16, fontFamily: Font.bold, fontWeight: 600, marginBottom: 4, color: Color.title },
 	subTitle: { fontSize: 12, color: Color.placeholder, marginBottom: 12 },
 	footer: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-	price: { fontFamily: 'SoraSemiBold', fontWeight: 600, fontSize: 18, color: Color.price },
+	price: { fontFamily: Font.bold, fontWeight: 600, fontSize: 18, color: Color.price },
 	addButton: {
 		width: 32,
 		height: 32,

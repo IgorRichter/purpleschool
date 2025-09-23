@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { Text, StyleSheet, Pressable, PressableProps, Animated, GestureResponderEvent } from 'react-native';
 import { useNavigation } from 'expo-router'; // <-- expo-router
-import { Color } from '../tokens';
+import { Color, Font } from '../tokens';
 
 type ButtonProps = PressableProps & {
 	title: string;
@@ -64,6 +64,6 @@ const styles = StyleSheet.create({
 		fontWeight: '600',
 		textAlign: 'center',
 		color: Color.white,
-		fontFamily: 'SoraSemiBold',
+		fontFamily: Font.bold,
 	},
 });

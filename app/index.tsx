@@ -1,7 +1,8 @@
 import { StyleSheet, Text, View, ImageBackground } from 'react-native';
 import { Button } from '../shared/Button/Button';
 import { AnimatedText } from '../shared/AnimatedText/AnimatedText';
-import { Color } from '../shared/tokens';
+import { Color, Font } from '../shared/tokens';
+import { router } from 'expo-router';
 
 export default function App() {
 	return (
@@ -10,7 +11,7 @@ export default function App() {
 				<View style={styles.wrapper}>
 					<AnimatedText style={styles.title} title="Одно из самых вкусных кофе в городе!" />
 					<Text style={styles.text}>Свежие зёрна, настоящая арабика и бережная обжарка</Text>
-					<Button title="Начать" href="catalog/index" />
+					<Button title="Начать" onPress={() => router.push('/(app)/home')} />
 				</View>
 			</ImageBackground>
 		</View>
@@ -35,7 +36,7 @@ const styles = StyleSheet.create({
 		textAlign: 'center',
 		color: Color.white,
 		marginBottom: 8,
-		fontFamily: 'SoraSemiBold',
+		fontFamily: Font.bold,
 		transform: [{ translateY: -50 }],
 	},
 	text: {
@@ -43,8 +44,8 @@ const styles = StyleSheet.create({
 		lineHeight: 18,
 		letterSpacing: 1,
 		textAlign: 'center',
-		color: Color.gray,
+		color: Color.lightgray,
 		marginBottom: 24,
-		fontFamily: 'Sora',
+		fontFamily: Font.regular,
 	},
 });
