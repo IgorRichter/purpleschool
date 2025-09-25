@@ -5,6 +5,7 @@ export const Color = {
 	black: '#000000',
 	border: '#EAEAEA',
 	primary: '#C67C4E',
+	primarylight: '#FFF5EE',
 	lightgray: '#A9A9A9',
 	gray: '#DEDEDE',
 	darkgray: '#9B9B9B',
@@ -21,4 +22,5 @@ export const Font = {
 	bold: 'Sora-SemiBold',
 };
 
-export const Api = 'https://purpleschool.ru/coffee-api';
+export const CoffeeListApi = 'https://purpleschool.ru/coffee-api';
+export const CoffeeItemApi = 'https://purpleschool.ru/coffee-api/id';

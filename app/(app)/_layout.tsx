@@ -2,7 +2,6 @@ import { Tabs } from 'expo-router';
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import React from 'react';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
-
 import { Color, Font } from '../../shared/tokens';
 import HomeTab from '../../assets/icons/homeTab';
 import OrderTab from '../../assets/icons/orderTab';

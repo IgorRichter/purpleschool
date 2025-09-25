@@ -11,7 +11,7 @@ import {
 	Dimensions,
 	TouchableOpacity,
 } from 'react-native';
-import { Api, Color, Font } from '../../../shared/tokens';
+import { CoffeeListApi, Color, Font } from '../../../shared/tokens';
 import SearchIcon from '../../../assets/icons/search';
 import StarIcon from '../../../assets/icons/star';
 import { BlurView } from 'expo-blur';
@@ -66,7 +66,7 @@ export default function Catalog() {
 	};
 
 	useEffect(() => {
-		fetch(Api)
+		fetch(CoffeeListApi)
 			.then((res) => res.json())
 			.then((data) => setCoffees(data))
 			.catch((err) => console.error(err));
@@ -84,7 +84,10 @@ export default function Catalog() {
 		const isRight = (index + 1) % NUM_COLUMNS === 0;
 
 		return (
-			<View style={[styles.card, !isRight && { marginRight: CARD_MARGIN }]}>
+			<Pressable
+				onPress={() => router.push(`/home/${item.id}`)}
+				style={[styles.card, !isRight && { marginRight: CARD_MARGIN }]}
+			>
 				<View style={styles.ratingContainer}>
 					<BlurView intensity={50} style={styles.ratingBlur}>
 						<StarIcon />
@@ -102,7 +105,7 @@ export default function Catalog() {
 						</Pressable>
 					</View>
 				</View>
-			</View>
+			</Pressable>
 		);
 	};
 
