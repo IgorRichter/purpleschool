@@ -3,10 +3,11 @@ import { Button } from '../shared/Button/Button';
 import { AnimatedText } from '../shared/AnimatedText/AnimatedText';
 import { Color, Font } from '../shared/tokens';
 import { router } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function App() {
 	return (
-		<View style={styles.container}>
+		<SafeAreaView style={styles.container}>
 			<ImageBackground source={require('../assets/splash-image.jpg')} resizeMode="cover">
 				<View style={styles.wrapper}>
 					<AnimatedText style={styles.title} title="Одно из самых вкусных кофе в городе!" />
@@ -14,7 +15,7 @@ export default function App() {
 					<Button title="Начать" onPress={() => router.push('/(app)/home')} />
 				</View>
 			</ImageBackground>
-		</View>
+		</SafeAreaView>
 	);
 }
 
@@ -31,7 +32,7 @@ const styles = StyleSheet.create({
 	},
 	title: {
 		fontSize: 34,
-		fontWeight: '600',
+		fontWeight: 600,
 		letterSpacing: 1,
 		textAlign: 'center',
 		color: Color.white,
