@@ -2,29 +2,28 @@ import { Tabs } from 'expo-router';
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import React from 'react';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
-
 import { Color, Font } from '../../shared/tokens';
 import HomeTab from '../../assets/icons/homeTab';
 import OrderTab from '../../assets/icons/orderTab';
+import BackButton from '../../shared/BackButton/BackButton';
 
 type Props = BottomTabBarProps;
 
 function CustomTabBar({ state, descriptors, navigation }: Props) {
+	const tabNames = ['home', 'order'];
+
 	return (
 		<View style={styles.tabs}>
-			{state.routes.map((route, index) => {
+			{tabNames.map((tabName, index) => {
+				const route = state.routes.find((r) => r.name === tabName)!;
 				const { options } = descriptors[route.key];
-				const isFocused = state.index === index;
+
+				const currentRouteName = state.routes[state.index]?.name;
+
+				const isFocused = currentRouteName === 'home' ? tabName === 'home' : tabName === 'order';
 
 				const onPress = () => {
-					const event = navigation.emit({
-						type: 'tabPress',
-						target: route.key,
-						canPreventDefault: true,
-					});
-					if (!isFocused && !event.defaultPrevented) {
-						navigation.navigate(route.name);
-					}
+					navigation.navigate(tabName);
 				};
 
 				return (
@@ -69,6 +68,29 @@ export default function AppLayout() {
 				options={{
 					title: 'Заказ',
 					tabBarIcon: ({ color }) => <OrderTab color={color} />,
+				}}
+			/>
+			<Tabs.Screen
+				name="address"
+				options={{
+					headerShown: true,
+					headerTitleAlign: 'center',
+					headerShadowVisible: false,
+					headerTitle: 'Изменить адрес',
+					headerTitleStyle: {
+						fontWeight: 600,
+						fontSize: 18,
+						fontFamily: Font.bold,
+					},
+					headerTintColor: Color.title,
+					headerStyle: {
+						backgroundColor: Color.white,
+					},
+					headerLeftContainerStyle: {
+						paddingLeft: 16,
+						paddingTop: 0,
+					},
+					headerLeft: () => <BackButton />,
 				}}
 			/>
 		</Tabs>

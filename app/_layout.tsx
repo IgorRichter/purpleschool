@@ -3,12 +3,11 @@ import { StatusBar } from 'expo-status-bar';
 import { useFonts } from 'expo-font';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useEffect } from 'react';
-import { Color } from '../shared/tokens';
 
 export default function RootLayout() {
 	const [loaded, error] = useFonts({
-		Sora: require('../assets/fonts/Sora-Regular.ttf'),
-		SoraSemiBold: require('../assets/fonts/Sora-SemiBold.ttf'),
+		'Sora-Regular': require('../assets/fonts/Sora-Regular.ttf'),
+		'Sora-SemiBold': require('../assets/fonts/Sora-SemiBold.ttf'),
 	});
 
 	useEffect(() => {
@@ -24,8 +23,8 @@ export default function RootLayout() {
 	return (
 		<SafeAreaProvider>
 			<StatusBar style="auto" />
-			<Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: Color.white } }}>
-				<Stack.Screen name="index" />
+			<Stack>
+				<Stack.Screen name="index" options={{ headerShown: false }} />
 				<Stack.Screen name="(app)" options={{ headerShown: false }} />
 			</Stack>
 		</SafeAreaProvider>

@@ -1,10 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TextInput, FlatList, Image, Pressable, ScrollView, Dimensions } from 'react-native';
-import { Api, Color, Font } from '../../../shared/tokens';
+import {
+	View,
+	Text,
+	StyleSheet,
+	TextInput,
+	FlatList,
+	Image,
+	Pressable,
+	ScrollView,
+	Dimensions,
+	TouchableOpacity,
+} from 'react-native';
+import { CoffeeListApi, Color, Font } from '../../../shared/tokens';
 import SearchIcon from '../../../assets/icons/search';
 import StarIcon from '../../../assets/icons/star';
 import { BlurView } from 'expo-blur';
 import PlusIcon from '../../../assets/icons/plus';
+import { router, useNavigation } from 'expo-router';
+import EditIcon from '../../../assets/icons/edit';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 type CoffeeItem = {
 	id: number;
@@ -30,6 +45,17 @@ export default function Catalog() {
 	const [coffees, setCoffees] = useState<CoffeeItem[]>([]);
 	const [searchText, setSearchText] = useState('');
 	const [activeType, setActiveType] = useState('all');
+	const [address, setAddress] = useState('');
+	const navigation = useNavigation();
+
+	useEffect(() => {
+		const unsubscribe = navigation.addListener('focus', async () => {
+			const savedAddress = await AsyncStorage.getItem('savedAddress');
+			if (savedAddress) setAddress(savedAddress);
+		});
+
+		return unsubscribe;
+	}, [navigation]);
 
 	const TYPE_LABELS: Record<string, string> = {
 		all: 'Все',
@@ -40,7 +66,7 @@ export default function Catalog() {
 	};
 
 	useEffect(() => {
-		fetch(Api)
+		fetch(CoffeeListApi)
 			.then((res) => res.json())
 			.then((data) => setCoffees(data))
 			.catch((err) => console.error(err));
@@ -58,7 +84,10 @@ export default function Catalog() {
 		const isRight = (index + 1) % NUM_COLUMNS === 0;
 
 		return (
-			<View style={[styles.card, !isRight && { marginRight: CARD_MARGIN }]}>
+			<Pressable
+				onPress={() => router.push(`/home/${item.id}`)}
+				style={[styles.card, !isRight && { marginRight: CARD_MARGIN }]}
+			>
 				<View style={styles.ratingContainer}>
 					<BlurView intensity={50} style={styles.ratingBlur}>
 						<StarIcon />
@@ -76,13 +105,22 @@ export default function Catalog() {
 						</Pressable>
 					</View>
 				</View>
-			</View>
+			</Pressable>
 		);
 	};
 
 	return (
-		<View style={styles.container}>
+		<SafeAreaView style={styles.container}>
 			<View style={styles.containerHeader}>
+				<View style={styles.addressCard}>
+					<Text style={styles.addressTitle}>Адрес</Text>
+					<View style={styles.addressWrapper}>
+						<Text style={styles.address}>{address || 'Адрес не указан'}</Text>
+						<TouchableOpacity onPress={() => router.push('/address')}>
+							<EditIcon color="#DDD" />
+						</TouchableOpacity>
+					</View>
+				</View>
 				<View style={styles.searchInner}>
 					<View style={styles.searchIcon}>
 						<SearchIcon />
@@ -120,7 +158,7 @@ export default function Catalog() {
 				numColumns={2}
 				contentContainerStyle={styles.listContent}
 			/>
-		</View>
+		</SafeAreaView>
 	);
 }
 
@@ -132,6 +170,28 @@ const styles = StyleSheet.create({
 	containerHeader: {
 		backgroundColor: Color.black,
 		padding: 30,
+	},
+	addressCard: {
+		gap: 4,
+		marginBottom: 30,
+	},
+	addressTitle: {
+		fontFamily: Font.regular,
+		fontSize: 12,
+		lineHeight: 12,
+		color: Color.titlesecond,
+	},
+	addressWrapper: {
+		flexDirection: 'row',
+		gap: 4,
+		alignItems: 'center',
+	},
+	address: {
+		fontFamily: Font.bold,
+		fontWeight: 600,
+		fontSize: 14,
+		lineHeight: 14,
+		color: Color.address,
 	},
 	searchInner: {
 		position: 'relative',

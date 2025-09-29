@@ -1,7 +1,10 @@
 import * as React from 'react';
 import Svg, { Path } from 'react-native-svg';
-const StarIcon = () => (
-	<Svg width={10} height={10} fill="none">
+type Props = {
+	size?: number;
+};
+const StarIcon: React.FC<Props> = ({ size = 10 }) => (
+	<Svg width={size} height={size} viewBox="0 0 10 10" fill="none">
 		<Path fill="none" d="M0 0h10v10H0z" />
 		<Path
 			fill="#FABD21"
