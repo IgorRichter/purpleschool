@@ -1,25 +1,93 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import EditIcon from '../../../assets/icons/edit';
 import { Color, Font } from '../../../shared/tokens';
 import { router, useNavigation } from 'expo-router';
+import MinusIcon from '../../../assets/icons/minus';
+import PlusIcon from '../../../assets/icons/plus';
+
+type CartItem = {
+	id: number;
+	name: string;
+	subTitle: string;
+	image: string;
+	price: number;
+	size?: 'S' | 'M' | 'L';
+	qty: number;
+};
 
 export default function Cart() {
+	const [items, setItems] = useState<CartItem[]>([]);
 	const [address, setAddress] = useState('');
 	const [note, setNote] = useState('');
 	const navigation = useNavigation();
 
-	useEffect(() => {
-		const unsubscribe = navigation.addListener('focus', async () => {
-			const savedAddress = await AsyncStorage.getItem('savedAddress');
-			const savedNote = await AsyncStorage.getItem('savedNote');
-			if (savedAddress) setAddress(savedAddress);
-			if (savedNote) setNote(savedNote);
-		});
+	const loadData = async () => {
+		const savedAddress = await AsyncStorage.getItem('savedAddress');
+		const savedNote = await AsyncStorage.getItem('savedNote');
+		const savedCart = await AsyncStorage.getItem('cart');
+		if (savedAddress) setAddress(savedAddress);
+		if (savedNote) setNote(savedNote);
+		if (savedCart) setItems(JSON.parse(savedCart));
+	};
 
-		return unsubscribe;
+	useEffect(() => {
+		const unsub = navigation.addListener('focus', loadData);
+		return unsub;
 	}, [navigation]);
+
+	const changeQty = async (id: number, delta: number) => {
+		const updated = [...items];
+		const idx = updated.findIndex((it) => it.id === id);
+
+		if (idx >= 0) {
+			const newQty = updated[idx].qty + delta;
+			if (newQty <= 0) {
+				updated.splice(idx, 1);
+			} else {
+				updated[idx].qty = newQty;
+			}
+		}
+
+		setItems(updated);
+		await AsyncStorage.setItem('cart', JSON.stringify(updated));
+	};
+
+	const total = items.reduce((acc, i) => acc + i.price * i.qty, 0);
+	const delivery = items.length === 0 ? 0 : 100;
+
+	const goToDetails = (item: CartItem) => {
+		router.push(`/home/${item.id}`);
+	};
+
+	const renderItem = ({ item }: { item: CartItem }) => (
+		<TouchableOpacity onPress={() => goToDetails(item)} style={styles.itemCard}>
+			<Image source={{ uri: item.image }} style={styles.itemImage} />
+			<View style={styles.itemWrapper}>
+				<Text style={styles.itemName}>{item.name}</Text>
+				<Text style={styles.itemSub}>
+					{item.subTitle}
+					{item.size ? ` / ${item.size}` : ''}
+				</Text>
+				<Text style={styles.itemPrice}>{item.price} ₽</Text>
+			</View>
+			<View style={styles.qtyBlock}>
+				<TouchableOpacity onPress={() => changeQty(item.id, -1)}>
+					<View style={styles.qtyBtn}>
+						<MinusIcon />
+					</View>
+				</TouchableOpacity>
+				<Text style={styles.qtyText}>{item.qty}</Text>
+				<TouchableOpacity onPress={() => changeQty(item.id, 1)}>
+					<View style={styles.qtyBtn}>
+						<PlusIcon />
+					</View>
+				</TouchableOpacity>
+			</View>
+		</TouchableOpacity>
+	);
+
 	return (
 		<View style={styles.container}>
 			<View style={styles.addressCard}>
@@ -33,42 +101,43 @@ export default function Cart() {
 					</TouchableOpacity>
 				</View>
 			</View>
+
+			<FlatList
+				data={items}
+				keyExtractor={(i) => `${i.id}-${i.size || 'default'}`}
+				renderItem={renderItem}
+				contentContainerStyle={styles.list}
+			/>
+
+			<View style={styles.summaryCard}>
+				<View style={styles.summaryRow}>
+					<Text style={styles.summaryLabel}>Цена</Text>
+					<Text style={styles.summaryValue}>{total} ₽</Text>
+				</View>
+				<View style={styles.summaryRow}>
+					<Text style={styles.summaryLabel}>Доставка</Text>
+					<Text style={styles.summaryValue}>{delivery} ₽</Text>
+				</View>
+				<View style={[styles.summaryRow, styles.summaryTotalRow]}>
+					<Text style={styles.summaryTotalLabel}>Итого к оплате</Text>
+					<Text style={styles.summaryTotalValue}>{total + delivery} ₽</Text>
+				</View>
+			</View>
+
+			<TouchableOpacity style={styles.orderButton}>
+				<Text style={styles.orderButtonText}>Заказать</Text>
+			</TouchableOpacity>
 		</View>
 	);
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: Color.background,
-		padding: 30,
-	},
-	addressCard: {
-		gap: 16,
-	},
-	addressTitle: {
-		fontFamily: Font.bold,
-		fontSize: 16,
-		lineHeight: 16,
-		color: Color.title,
-		fontWeight: 600,
-	},
-	addressWrapper: {
-		gap: 8,
-	},
-	address: {
-		fontFamily: Font.bold,
-		fontSize: 14,
-		lineHeight: 14,
-		color: Color.title,
-		fontWeight: 600,
-	},
-	note: {
-		fontFamily: Font.regular,
-		fontSize: 12,
-		lineHeight: 12,
-		color: Color.titlesecond,
-	},
+	container: { flex: 1, backgroundColor: Color.background, padding: 30 },
+	addressCard: { marginBottom: 20, gap: 8 },
+	addressTitle: { fontFamily: Font.bold, fontSize: 16, color: Color.title },
+	addressWrapper: { gap: 4 },
+	address: { fontFamily: Font.bold, fontSize: 14, color: Color.title },
+	note: { fontFamily: Font.regular, fontSize: 12, color: Color.titlesecond },
 	addressButton: {
 		borderWidth: 1,
 		borderColor: Color.border,
@@ -81,10 +150,46 @@ const styles = StyleSheet.create({
 		alignSelf: 'flex-start',
 		marginTop: 8,
 	},
-	addressButtonText: {
-		fontFamily: Font.regular,
-		fontSize: 12,
-		lineHeight: 12,
-		color: Color.title,
+	addressButtonText: { fontSize: 12, color: Color.title },
+	list: { borderTopWidth: 1, borderColor: Color.border },
+	itemCard: {
+		flexDirection: 'row',
+		backgroundColor: Color.white,
+		alignItems: 'center',
+		borderBottomWidth: 1,
+		borderColor: Color.border,
+		paddingVertical: 12,
 	},
+	itemWrapper: { flex: 1 },
+	itemImage: { width: 60, height: 60, borderRadius: 12, marginRight: 12 },
+	itemName: { fontFamily: Font.bold, fontSize: 16, color: Color.title },
+	itemSub: { fontSize: 12, color: Color.placeholder, marginVertical: 4 },
+	itemPrice: { fontFamily: Font.bold, fontSize: 14, color: Color.price },
+	qtyBlock: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+	qtyBtn: {
+		alignItems: 'center',
+		justifyContent: 'center',
+		width: 28,
+		height: 28,
+		borderRadius: 28,
+		borderWidth: 1,
+		borderColor: Color.border,
+	},
+	qtyText: { fontSize: 16, fontFamily: Font.bold },
+	summaryCard: { marginTop: 10, gap: 8 },
+	summaryRow: { flexDirection: 'row', justifyContent: 'space-between' },
+	summaryLabel: { fontSize: 14, color: Color.title },
+	summaryValue: { fontSize: 14, color: Color.title },
+	summaryTotalRow: { borderTopWidth: 1, borderColor: Color.border, paddingTop: 8, marginTop: 4 },
+	summaryTotalLabel: { fontFamily: Font.bold, fontSize: 16, color: Color.title },
+	summaryTotalValue: { fontFamily: Font.bold, fontSize: 16, color: Color.primary },
+
+	orderButton: {
+		marginTop: 20,
+		backgroundColor: Color.primary,
+		borderRadius: 16,
+		paddingVertical: 20,
+		alignItems: 'center',
+	},
+	orderButtonText: { color: Color.white, fontFamily: Font.bold, fontSize: 16 },
 });
