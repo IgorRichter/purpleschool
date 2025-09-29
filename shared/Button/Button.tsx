@@ -1,8 +1,17 @@
-import { Text, StyleSheet, PressableProps, Pressable, Animated, GestureResponderEvent } from 'react-native';
-import { Color } from '../tokens';
+import React, { useRef } from 'react';
+import { Text, StyleSheet, Pressable, PressableProps, Animated, GestureResponderEvent } from 'react-native';
+import { useNavigation } from 'expo-router'; // <-- expo-router
+import { Color, Font } from '../tokens';
 
-export function Button({ title, ...probs }: PressableProps & { title: string }) {
-	const animatedValue = new Animated.Value(100);
+type ButtonProps = PressableProps & {
+	title: string;
+	href?: string;
+};
+
+export function Button({ title, href, onPress, ...props }: ButtonProps) {
+	const navigation = useNavigation();
+	const animatedValue = useRef(new Animated.Value(100)).current;
+
 	const color = animatedValue.interpolate({
 		inputRange: [0, 100],
 		outputRange: ['#A76237', '#C67C4E'],
@@ -14,21 +23,29 @@ export function Button({ title, ...probs }: PressableProps & { title: string }) 
 			duration: 100,
 			useNativeDriver: false,
 		}).start();
-		probs.onPressIn?.(e);
+		props.onPressIn?.(e);
 	};
 
 	const fadeOut = (e: GestureResponderEvent) => {
 		Animated.timing(animatedValue, {
 			toValue: 100,
 			duration: 100,
-			useNativeDriver: true,
+			useNativeDriver: false,
 		}).start();
-		probs.onPressOut?.(e);
+		props.onPressOut?.(e);
+	};
+
+	const handlePress = (e: GestureResponderEvent) => {
+		if (onPress) {
+			onPress(e);
+		} else if (href) {
+			navigation.navigate(href as never);
+		}
 	};
 
 	return (
-		<Pressable {...probs} onPressIn={fadeIn} onPressOut={fadeOut}>
-			<Animated.View style={{ ...styles.button, backgroundColor: color }}>
+		<Pressable {...props} onPressIn={fadeIn} onPressOut={fadeOut} onPress={handlePress}>
+			<Animated.View style={[styles.button, { backgroundColor: color }]}>
 				<Text style={styles.title}>{title}</Text>
 			</Animated.View>
 		</Pressable>
@@ -44,9 +61,9 @@ const styles = StyleSheet.create({
 	},
 	title: {
 		fontSize: 16,
-		fontWeight: 600,
+		fontWeight: '600',
 		textAlign: 'center',
 		color: Color.white,
-		fontFamily: 'SoraSemiBold',
+		fontFamily: Font.bold,
 	},
 });

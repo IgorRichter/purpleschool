@@ -11,8 +11,8 @@ export function AnimatedText({ title, style }: AnimatedTextProps) {
 
 	useEffect(() => {
 		Animated.timing(animatedValue, {
-			toValue: { x: 0, y: 100 },
-			duration: 2000,
+			toValue: { x: 0, y: 50 },
+			duration: 1000,
 			useNativeDriver: true,
 		}).start();
 	}, []);

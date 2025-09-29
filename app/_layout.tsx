@@ -3,6 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useFonts } from 'expo-font';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useEffect } from 'react';
+import { Color } from '../shared/tokens';
 
 export default function RootLayout() {
 	const [loaded, error] = useFonts({
@@ -11,33 +12,21 @@ export default function RootLayout() {
 	});
 
 	useEffect(() => {
-		if (loaded) {
-			SplashScreen.hideAsync();
-		}
+		if (loaded) SplashScreen.hideAsync();
 	}, [loaded]);
 
 	useEffect(() => {
-		if (error) {
-			throw error;
-		}
+		if (error) throw error;
 	}, [error]);
 
-	if (!loaded) {
-		return null;
-	}
+	if (!loaded) return null;
+
 	return (
 		<SafeAreaProvider>
 			<StatusBar style="auto" />
-			<Stack
-				screenOptions={{
-					headerShown: false,
-				}}
-			>
+			<Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: Color.white } }}>
 				<Stack.Screen name="index" />
-				<Stack.Screen name="catalog/index" />
-				<Stack.Screen name="cart/index" />
-				<Stack.Screen name="address/index" />
-				<Stack.Screen name="success/index" />
+				<Stack.Screen name="(app)" options={{ headerShown: false }} />
 			</Stack>
 		</SafeAreaProvider>
 	);
