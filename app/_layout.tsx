@@ -23,6 +23,7 @@ export default function RootLayout() {
 	return (
 		<SafeAreaProvider>
 			<StatusBar style="auto" />
+
 			<Stack>
 				<Stack.Screen name="index" options={{ headerShown: false }} />
 				<Stack.Screen name="(app)" options={{ headerShown: false }} />

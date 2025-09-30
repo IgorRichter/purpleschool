@@ -32,8 +32,16 @@
         {
           "fonts": [
             "./assets/fonts/Sora-Regular.ttf",
-            "./assets/fonts/Sora-SemoBold.ttf"
+            "./assets/fonts/Sora-SemiBold.ttf"
           ]
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#ffffff",
+          "sounds": []
         }
       ]
     ],

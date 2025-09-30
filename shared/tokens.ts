@@ -24,3 +24,4 @@ export const Font = {
 
 export const CoffeeListApi = 'https://purpleschool.ru/coffee-api';
 export const CoffeeItemApi = 'https://purpleschool.ru/coffee-api/id';
+export const CoffeePostApi = 'https://purpleschool.ru/coffee-api/order';

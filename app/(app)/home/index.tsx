@@ -20,6 +20,7 @@ import { router, useNavigation } from 'expo-router';
 import EditIcon from '../../../assets/icons/edit';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Toast from 'react-native-toast-message';
 
 type CoffeeItem = {
 	id: number;
@@ -32,13 +33,17 @@ type CoffeeItem = {
 	rating: number;
 };
 
+type CartItem = CoffeeItem & {
+	size: 'S' | 'M' | 'L';
+	qty: number;
+};
+
 const TYPES = ['all', 'cappuccino', 'macchiato', 'latte', 'americano'];
 
 const { width } = Dimensions.get('window');
 const NUM_COLUMNS = 2;
 const CARD_MARGIN = 16;
 const CONTAINER_PADDING = 30;
-
 const cardWidth = (width - CONTAINER_PADDING * 2 - CARD_MARGIN) / NUM_COLUMNS;
 
 export default function Catalog() {
@@ -53,7 +58,6 @@ export default function Catalog() {
 			const savedAddress = await AsyncStorage.getItem('savedAddress');
 			if (savedAddress) setAddress(savedAddress);
 		});
-
 		return unsubscribe;
 	}, [navigation]);
 
@@ -80,6 +84,32 @@ export default function Catalog() {
 		return matchesType && matchesText;
 	});
 
+	const addToCart = async (item: CoffeeItem) => {
+		try {
+			const stored = await AsyncStorage.getItem('cart');
+			const cart: CartItem[] = stored ? JSON.parse(stored) : [];
+
+			const idx = cart.findIndex((c: CartItem) => c.id === item.id && c.size === 'M');
+
+			if (idx >= 0) {
+				cart[idx].qty += 1;
+			} else {
+				cart.push({ ...item, size: 'M', qty: 1 });
+			}
+
+			await AsyncStorage.setItem('cart', JSON.stringify(cart));
+
+			Toast.show({
+				type: 'success',
+				text1: `${item.name} (M) добавлен в корзину`,
+				position: 'top',
+				visibilityTime: 2000,
+			});
+		} catch (err) {
+			console.error('Ошибка добавления в корзину', err);
+		}
+	};
+
 	const renderCoffee = ({ item, index }: { item: CoffeeItem; index: number }) => {
 		const isRight = (index + 1) % NUM_COLUMNS === 0;
 
@@ -100,8 +130,8 @@ export default function Catalog() {
 					<Text style={styles.subTitle}>{item.subTitle}</Text>
 					<View style={styles.footer}>
 						<Text style={styles.price}>{item.price} ₽</Text>
-						<Pressable style={styles.addButton}>
-							<PlusIcon />
+						<Pressable style={styles.addButton} onPress={() => addToCart(item)}>
+							<PlusIcon color={Color.white} />
 						</Pressable>
 					</View>
 				</View>
@@ -134,6 +164,7 @@ export default function Catalog() {
 					/>
 				</View>
 			</View>
+
 			<ScrollView
 				horizontal
 				showsHorizontalScrollIndicator={false}
@@ -156,8 +187,10 @@ export default function Catalog() {
 				keyExtractor={(item) => item.id.toString()}
 				renderItem={renderCoffee}
 				numColumns={2}
+				style={styles.list}
 				contentContainerStyle={styles.listContent}
 			/>
+			<Toast />
 		</SafeAreaView>
 	);
 }
@@ -241,9 +274,11 @@ const styles = StyleSheet.create({
 		color: Color.white,
 		fontWeight: 600,
 	},
+	list: {
+		flex: 1,
+	},
 	listContent: {
 		paddingHorizontal: 30,
-		flex: 1,
 	},
 	card: {
 		width: cardWidth,
