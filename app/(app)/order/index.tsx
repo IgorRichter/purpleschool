@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Notifications from 'expo-notifications';
 import EditIcon from '../../../assets/icons/edit';
-import { Color, Font } from '../../../shared/tokens';
+import { CoffeePostApi, Color, Font } from '../../../shared/tokens';
 import { router, useNavigation } from 'expo-router';
 import MinusIcon from '../../../assets/icons/minus';
 import PlusIcon from '../../../assets/icons/plus';
@@ -59,6 +60,57 @@ export default function Cart() {
 
 	const goToDetails = (item: CartItem) => {
 		router.push(`/home/${item.id}`);
+	};
+
+	const handleOrder = async () => {
+		if (!items.length) {
+			Alert.alert('Корзина пуста', 'Добавьте товары для оформления заказа');
+			return;
+		}
+		if (!address) {
+			Alert.alert('Адрес не указан', 'Укажите адрес доставки');
+			return;
+		}
+
+		const orderData = {
+			address,
+			note,
+			orderItem: items.map((item) => ({
+				id: item.id,
+				size: item.size || null,
+				qty: item.qty,
+			})),
+		};
+
+		try {
+			const res = await fetch(CoffeePostApi, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(orderData),
+			});
+
+			if (!res.ok) throw new Error(`Ошибка сервера: ${res.status}`);
+
+			await AsyncStorage.removeItem('cart');
+			setItems([]);
+
+			await Notifications.scheduleNotificationAsync({
+				content: {
+					title: 'Кофе готово! ☕',
+					body: 'Заберите свой заказ у бариста.',
+				},
+				trigger: {
+					seconds: 10,
+					repeats: false,
+					type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+				},
+			});
+
+			router.replace('/order/success');
+		} catch (err) {
+			console.error(err);
+			Alert.alert('Ошибка', 'Не удалось отправить заказ, попробуйте позже.');
+		}
 	};
 
 	const renderItem = ({ item }: { item: CartItem }) => (
@@ -124,7 +176,7 @@ export default function Cart() {
 				</View>
 			</View>
 
-			<TouchableOpacity style={styles.orderButton}>
+			<TouchableOpacity style={styles.orderButton} onPress={handleOrder}>
 				<Text style={styles.orderButtonText}>Заказать</Text>
 			</TouchableOpacity>
 		</View>

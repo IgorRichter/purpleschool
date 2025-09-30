@@ -23,7 +23,11 @@ function CustomTabBar({ state, descriptors, navigation }: Props) {
 				const isFocused = currentRouteName === 'home' ? tabName === 'home' : tabName === 'order';
 
 				const onPress = () => {
-					navigation.navigate(tabName);
+					if (tabName === 'order') {
+						navigation.navigate('order', { screen: 'index' });
+					} else {
+						navigation.navigate(tabName);
+					}
 				};
 
 				return (

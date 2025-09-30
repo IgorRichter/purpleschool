@@ -5,6 +5,7 @@ import BackButton from '../../../shared/BackButton/BackButton';
 export default function OrderLayout() {
 	return (
 		<Stack
+			initialRouteName="index"
 			screenOptions={{
 				headerShown: true,
 				contentStyle: { backgroundColor: Color.white },
@@ -23,7 +24,14 @@ export default function OrderLayout() {
 			}}
 		>
 			<Stack.Screen name="index" options={{ headerTitle: 'Заказ' }} />
-			<Stack.Screen name="success" options={{ headerTitle: 'Заказ оформлен!' }} />
+			<Stack.Screen
+				name="success"
+				options={{
+					headerTitle: 'Заказ оформлен!',
+					headerLeft: () => null,
+					headerBackVisible: false,
+				}}
+			/>
 		</Stack>
 	);
 }

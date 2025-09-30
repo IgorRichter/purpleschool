@@ -4,8 +4,35 @@ import { AnimatedText } from '../shared/AnimatedText/AnimatedText';
 import { Color, Font } from '../shared/tokens';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import * as Notifications from 'expo-notifications';
+import { Platform } from 'react-native';
+import { useEffect } from 'react';
 
 export default function App() {
+	useEffect(() => {
+		Notifications.setNotificationHandler({
+			handleNotification: async () => ({
+				shouldShowAlert: true,
+				shouldShowBadge: false,
+				shouldPlaySound: true,
+				shouldShowBanner: true,
+				shouldSetBadge: false,
+				shouldShowList: true,
+			}),
+		});
+
+		const requestPermissions = async () => {
+			const { status } = await Notifications.getPermissionsAsync();
+			if (status !== 'granted') {
+				await Notifications.requestPermissionsAsync();
+			}
+		};
+
+		if (Platform.OS !== 'web') {
+			requestPermissions();
+		}
+	}, []);
+
 	return (
 		<SafeAreaView style={styles.container}>
 			<ImageBackground source={require('../assets/splash-image.jpg')} resizeMode="cover">
