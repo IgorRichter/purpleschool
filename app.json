@@ -1,8 +1,12 @@
 {
   "expo": {
-    "name": "coffee-shop",
+    "name": "Coffee Shop App",
     "slug": "coffee-shop",
     "version": "1.0.0",
+    "platform": [
+      "ios",
+      "android"
+    ],
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -20,7 +24,8 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.anonymous.coffeeshop"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -39,7 +44,6 @@
       [
         "expo-notifications",
         {
-          "icon": "./assets/notification-icon.png",
           "color": "#ffffff",
           "sounds": []
         }
